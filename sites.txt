@@ -1,0 +1,12 @@
+http://socket.io/docs/rooms-and-namespaces/#
+http://www.tamas.io/simple-chat-application-using-node-js-and-socket-io/
+http://www.tamas.io/advanced-chat-using-node-js-and-socket-io-episode-1/
+https://scotch.io/tutorials/a-realtime-room-chat-app-using-node-webkit-socket-io-and-mean
+http://code.tutsplus.com/tutorials/using-nodejs-and-websockets-to-build-a-chat-service--net-34482
+http://code.tutsplus.com/tutorials/real-time-chat-with-nodejs-socketio-and-expressjs--net-31708
+http://www.sitepoint.com/build-node-js-powered-chatroom-web-app-connecting-websockets/
+http://stackoverflow.com/questions/10342681/whats-the-difference-between-io-sockets-emit-and-broadcast
+http://socket.io/docs/#
+http://howtonode.org/websockets-socketio
+http://thejackalofjavascript.com/websockets-and-sockets-io/
+http://lynx.io/article/socketio-introduction
