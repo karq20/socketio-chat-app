@@ -5,6 +5,8 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var users = {}; //key-nick, value-socket
 
+var port = process.env.PORT || 3000;
+
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
@@ -63,6 +65,6 @@ io.on('connection', function(socket){
 });
 
 
-server.listen(3000, function(){
-	console.log("Server running on port 3000");
+server.listen(port, function(){
+	console.log("Server running on port "+port);
 });
