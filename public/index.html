@@ -78,7 +78,6 @@ Refer Contact List App for simple use of angular
                    if(callback){
                      $('#nickWrap').hide();
                      $('#chatContent').show();
-                     //$pmWrap.hide();
        
                    } else {
                      $nickError.text('That username is already taken! Please try again!');
@@ -92,28 +91,31 @@ Refer Contact List App for simple use of angular
                var html = '<h3 id="userHeading">Online Users</h3><hr>';
 
                for(i=0;i< data.length; i++) {
-                 html += '<button id="clickUser">';
+                 html += '<span><button id="clickUser">';
                  html += data[i];
-                 html += '</button><br>';
+                 html += '</button></span><br>';
                }
                $users.html(html);
                $users.css("overflow", "auto");
-               $users.animate({ scrollTop: $(window).height() }, "slow");
                
              });
               
              //on user connect
              socket.on('user joined', function(data) {
                $chatList.append('<li id="joinleftMsg"><strong>'+ data.nick + '</strong>' + ' joined<li>');
-               $chatWrap.animate({ scrollTop: $(window).height() }, "slow");
+               $chatWrap.animate({ scrollTop: $(window).height() }, "fast");
        
              });
        
              //chat message sent
             $messageForm.submit(function(e){
               e.preventDefault();
-              if($nickBox.val() != ''){
+              var mynick = $nickBox.val().trim();
+              if($messageBox.val().trim() != ''){
                 socket.emit('send msg', $messageBox.val());
+                var nicklink = '<span><button id="clickUser"><strong>'+ mynick +'</strong></button></span>';
+                $chatList.append('<li id="publicMsg">'+ nicklink + ': ' + $messageBox.val() + '</li>');
+                $chatWrap.animate({ scrollTop: $(window).height() }, "slow");
                 $messageBox.val('');
                 return false;
               }
@@ -121,13 +123,13 @@ Refer Contact List App for simple use of angular
        
             //recd msg from server
             socket.on('new msg', function(data){
-              var nicklink = '<button id="clickUser"><strong>'+data.nick+'</strong></button>';
+              var nicklink = '<span><button id="clickUser"><strong>'+data.nick+'</strong></button></span>';
                $chatList.append('<li id="publicMsg">'+ nicklink + ': ' + data.message + '</li>');
                $chatWrap.animate({ scrollTop: $(window).height() }, "slow");
             });
 
            /*****PM handling*******/
-
+          $(function(){
             $('#clickUser').click(function(){
               //$pmWrap.show();
               var userclicked = $('#clickUser').val();
@@ -140,15 +142,21 @@ Refer Contact List App for simple use of angular
               }
             });
 
+          });
+            
             socket.on('new pm', function(data) {
+              $pmWrap.css("visibility", "visible");
+
               $('#otherguy').text($('#clickUser').val()).append('<br>');
               var nicklink = '<button id="clickUser"><strong>'+data.nick+'</strong></button>';
               $pmList.append('<li id="pmMsg">'+ nicklink + ': ' + data.message + '</li>');
               $pmWrap.animate({ scrollTop: $(window).height() }, "slow");
             });
             
-         
+
+
            /************/
+            
              //on user disconnect
              socket.on('user left', function(data) {
                $chatList.append('<li id="joinleftMsg"><strong>'+ data.nick + '</strong>' + ' left<li>');

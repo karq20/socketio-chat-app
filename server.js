@@ -31,7 +31,8 @@ io.on('connection', function(socket){
       console.log(socket.nickname + " connected");
       socket.broadcast.emit('user joined', {nick:socket.nickname});
     }
-  })
+  });
+
 
 //update nicknames when someone new joins
   function updateNicknames() {
@@ -40,14 +41,17 @@ io.on('connection', function(socket){
 
 //send msg
   socket.on('send msg', function(msg){
-		io.emit('new msg', {message:msg, nick: socket.nickname});
+		socket.broadcast.emit('new msg', {message:msg, nick: socket.nickname});
     //socket.broadcast.emit() - sends to all except sender
   });
 
 //send pm
   socket.on('send pm', function(data) { //to is receiver
-    console.log(socket.nickname + '->' + data.to + ': '+ data.msg);
-    users[data.to].emit('new pm', {message:msg, receiver:data.to, nick:socket.nickname});
+    if(data.to != socket.nickname) {
+      console.log(socket.nickname + '->' + data.to + ': '+ data.msg);
+      users[data.to].emit('new pm', {message:msg, receiver:data.to, nick:socket.nickname});
+    }
+    else console.log("dont click yourself!");
   });
 
 //on disconnect

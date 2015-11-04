@@ -40,8 +40,8 @@
 	margin-right: 0.5%;
 	border:1px #000 solid;
 	margin-bottom: 5%;
-	height: 75%;
-	width: 50%;
+	height: 60%;
+	width: 40%;
 	word-wrap: break-word;
 	overflow-x: hidden;
     overflow-y: auto;
@@ -51,15 +51,15 @@
 
 	list-style-type: none;
 	/*margin-bottom: 50px;*/ 
-	padding: 4px; 
+	padding: 0px; 
 }
 #publicMsg {
-	padding: 5px; 
+	padding: 2px; 
 	/*background-color: #aaa;*/
 	border-color: #ccc;
 	color: #000;
 	font-size: 14px;
-	margin: 3px;
+	margin: 1px;
 }
 
 /*TODO*/
@@ -76,6 +76,7 @@
 	padding-right: 5px;
 	margin-left: 0.5%;
 	border:1px #000 solid;
+	visibility: hidden;
 
 }
 #pmList {
@@ -100,9 +101,9 @@
 #users {
 	position: relative;
 	float: right;
-	right: 2%;
+	right: 10%;
 	font-size: 14;
-	height: 70%;
+	height: 60%;
 	width: 10%;
 	text-align: left;
 	padding: 5px;
@@ -126,17 +127,17 @@
 	/*background-color: #aaa;*/
 	border-color: #ccc;
 	color: #aaa;
-	font-size: 15px;
-	margin: 3px;	
+	font-size: 14px;
+	margin: 0px;	
 }
 
 /**************************************/
 
 /*************send message form********/
-#sendMessage{
+#sendMessage {
 	position: fixed;
-	padding: 3px;
-	bottom: 0;/*
+	padding: 0px;
+	bottom: 10%;/*
 	left: 10%;
 	right:10%;*/
 	width: 50%;
@@ -153,8 +154,7 @@
 	font-size: 14;
 	border: 1px blue solid;
 	padding: 5px; 
-	margin-right: 0.5%; 
-	margin-left: 2%;
+	margin:1%;
 	width: 60%;
 }
 #pmBox {
