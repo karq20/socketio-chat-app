@@ -153,9 +153,7 @@ Refer Contact List App for simple use of angular
              socket.on('user left', function(data) {
                $chatList.append('<li id="joinleftMsg"><strong>'+ data.nick + '</strong>' + ' left<li>');
                $chatWrap.animate({ scrollTop: $(window).height() }, "slow");
-               $pmList.append('<li id="joinleftMsg"><strong>'+ data.nick + '</strong>' + ' left<li>');
-               $pmWrap.animate({ scrollTop: $(window).height() }, "slow");
-             });
+            });
     });   
     </script>
   </body>
