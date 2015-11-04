@@ -113,6 +113,7 @@
 #userHeading {
 	color:blue;
 	font-size: 16;
+	text-align: center;
 }
 #clickUser {
 	background:none;border:none;
