@@ -1,0 +1,162 @@
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    
+    <link rel="stylesheet" href="style.css" >
+
+  </head>
+  <body>
+    <div id="welcome">
+      <h2>Chatterbox</h2>
+    </div>
+    
+    <div id="nickWrap">
+      <p>Enter your name: </p>
+      <p id="nickError"></p>
+      <form id="nickForm">
+        <input size="35" id="nickname" placeholder="type here and press enter" />
+        <button id="nickSubmit">Submit</button>
+      </form>
+    </div>
+
+    <div id="chatContent">
+      <!--Online Users-->
+      <div id="users"></div>
+      <div id="pmWrap">
+        <h4 id="otherguy"></h4>
+        <ul id="pmList"></ul>
+
+        <form action="" id="sendPM">
+          <input id="pmBox" autocomplete="off" placeholder="click on the person to char here" />
+          <button id="pmButton">Send</button>
+        </form>
+        <!--add a form here for pm sending
+        -->
+      </div>
+    
+      <div id="chatWrap">
+        <ul id="chatList"></ul>
+        <form action="" id="sendMessage">
+          <input id="messageBox" autocomplete="off" placeholder="type here and press enter" />
+          <button id="sendButton">Send</button>
+        </form>
+      </div>
+
+
+    </div>
+
+
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<!--
+Add angular and bootstrap for buttons
+Using angular, display msg on chat area
+Refer Contact List App for simple use of angular
+-->
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      $(document).ready(function() {
+        var socket = io.connect();  /*load the socket.io-client, which exposes a io global, and then connect.*/
+             var $nickForm = $('#nickForm');
+             var $nickError = $('#nickError');
+             var $nickBox = $('#nickname');
+             var $users = $('#users');
+             var $messageForm = $('#sendMessage');
+             var $messageBox = $('#messageBox');
+             var $chatList = $('#chatList');
+             var $chatWrap = $('#chatWrap');
+             var $pmWrap = $('#pmWrap');
+             var $pmList = $('#pmList');
+             var $pmBox = $('#pmBox');
+             
+
+             $nickForm.submit(function(e) {
+               e.preventDefault();
+               if($nickBox.val().trim() != '')
+               {
+                 socket.emit('new user', $nickBox.val(), function(callback) {
+                   if(callback){
+                     $('#nickWrap').hide();
+                     $('#chatContent').show();
+                     //$pmWrap.hide();
+       
+                   } else {
+                     $nickError.text('That username is already taken! Please try again!');
+                   }
+                 });
+               } 
+               
+             });
+             //online users
+             socket.on('usernames', function(data) {
+               var html = '<h3 id="userHeading">Online Users</h3><hr>';
+
+               for(i=0;i< data.length; i++) {
+                 html += '<button id="clickUser">';
+                 html += data[i];
+                 html += '</button><br>';
+               }
+               $users.html(html);
+               $users.css("overflow", "auto");
+               $users.animate({ scrollTop: $(window).height() }, "slow");
+               
+             });
+              
+             //on user connect
+             socket.on('user joined', function(data) {
+               $chatList.append('<li id="joinleftMsg"><strong>'+ data.nick + '</strong>' + ' joined<li>');
+               $chatWrap.animate({ scrollTop: $(window).height() }, "slow");
+       
+             });
+       
+             //chat message sent
+            $messageForm.submit(function(e){
+              e.preventDefault();
+              if($nickBox.val() != ''){
+                socket.emit('send msg', $messageBox.val());
+                $messageBox.val('');
+                return false;
+              }
+            });
+       
+            //recd msg from server
+            socket.on('new msg', function(data){
+              var nicklink = '<button id="clickUser"><strong>'+data.nick+'</strong></button>';
+               $chatList.append('<li id="publicMsg">'+ nicklink + ': ' + data.message + '</li>');
+               $chatWrap.animate({ scrollTop: $(window).height() }, "slow");
+            });
+
+           /*****PM handling*******/
+
+            $('#clickUser').click(function(){
+              //$pmWrap.show();
+              var userclicked = $('#clickUser').val();
+              var pmmsg = $pmBox.val();
+              $('#otherguy').text(userclicked).append('<br>');
+              if($pmBox.val() != ''){
+                socket.emit('send pm', {msg: pmmsg, to: userclicked});
+                $pmBox.val('');
+                return false;
+              }
+            });
+
+            socket.on('new pm', function(data) {
+              $('#otherguy').text($('#clickUser').val()).append('<br>');
+              var nicklink = '<button id="clickUser"><strong>'+data.nick+'</strong></button>';
+              $pmList.append('<li id="pmMsg">'+ nicklink + ': ' + data.message + '</li>');
+              $pmWrap.animate({ scrollTop: $(window).height() }, "slow");
+            });
+            
+         
+           /************/
+             //on user disconnect
+             socket.on('user left', function(data) {
+               $chatList.append('<li id="joinleftMsg"><strong>'+ data.nick + '</strong>' + ' left<li>');
+               $chatWrap.animate({ scrollTop: $(window).height() }, "slow");
+               $pmList.append('<li id="joinleftMsg"><strong>'+ data.nick + '</strong>' + ' left<li>');
+               $pmWrap.animate({ scrollTop: $(window).height() }, "slow");
+             });
+    });   
+    </script>
+  </body>
+</html>
