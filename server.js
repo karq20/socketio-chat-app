@@ -44,15 +44,13 @@ io.on('connection', function(socket){
       //socket.broadcast.emit() - sends to all except sender
     });
 
-    function pmMyself(msg) {
-      socket.emit('pmmyself', {message:msg, nick:socket.nickname});
-    }
 
   //send pm
     socket.on('send pm', function(data) { //to is receiver
-        console.log(socket.nickname + '->' + data.to + ': '+ data.msg);
-        users[data.to].emit('new pm', {message:data.msg, receiver:data.to, nick:socket.nickname});
-        pmMyself(data.msg);
+      console.log(socket.nickname + '->' + data.to + ': '+ data.msg);
+      users[data.to].emit('new pm', {message:data.msg, receiver:data.to, nick:socket.nickname});
+      //socket.emit('pmmyself', {message:msg, receiver:to, nick:socket.nickname});
+      socket.emit('pmmyself', {message:data.msg});
     });
 
   //on disconnect
@@ -60,7 +58,7 @@ io.on('connection', function(socket){
       if(!socket.nickname){
         return;
       }else {
-        socket.leave();
+        socket.leave(this);
         console.log(socket.nickname +' disconnected');
         io.emit('user left', {nick: socket.nickname});//send nick who left to client
         delete users[socket.nickname];

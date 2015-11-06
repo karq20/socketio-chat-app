@@ -33,7 +33,7 @@ $(document).ready(function() {
             });
 
             //online users
-            var nickMine = $nickBox.val();
+          
             socket.on('usernames', function(data) {
               var html = '<h3 id="userHeading">Online Users</h3><hr>';
 
@@ -60,11 +60,15 @@ $(document).ready(function() {
               $users.css("overflow", "auto");
                
             });
-            
+           
+            function mainChatScrollDown() {
+              $chatWrap.animate({ scrollTop: $(window).height() }, "fast");
+            }
+
              //on user connect
              socket.on('user joined', function(data) {
                $chatList.append('<li id="joinleftMsg"><strong>'+ data.nick + '</strong>' + ' joined<li>');
-               $chatWrap.animate({ scrollTop: $(window).height() }, "fast");
+               mainChatScrollDown();              
 
              });
 
@@ -74,9 +78,9 @@ $(document).ready(function() {
               
               if($messageBox.val().trim() != ''){
                 socket.emit('send msg', $messageBox.val());
-                var nicklink1 = '<span><strong>'+ nickMine +'</strong></span> ';
+                var nicklink1 = '<span><strong>'+ $nickBox.val() +'</strong></span> ';
                 $chatList.append('<li id="publicMsg" style="padding:2px 8px 2px 8px;">'+ nicklink1 + '  : ' + $messageBox.val() + '</li>');
-                $chatWrap.animate({ scrollTop: $(window).height() }, "slow");
+                mainChatScrollDown();
                 $messageBox.val('');
                 return false;
               }
@@ -86,34 +90,35 @@ $(document).ready(function() {
             socket.on('new msg', function(data){
               var nicklink2 = '<span><button id="clickUser"><strong>'+data.nick+'</strong></button></span>';
               $chatList.append('<li id="publicMsg">'+ nicklink2 + ': ' + data.message + '</li>');
-              $chatWrap.animate({ scrollTop: $(window).height() }, "slow");
+              mainChatScrollDown();
             });
 
            /*****PM handling*******/ 
 
+            function pmChatScrollDown() {
+
+              $pmWrap.animate({ scrollTop: $(window).height() }, "slow");
+            }
+
             $(document).on("click", "#clickUser", function(){
               var $pmForm = $('#sendPM');
-              var $pmWrap = $('#pmWrap');
+              //var $pmWrap = $('#pmWrap');
               var $pmList = $('#pmList');
               var $pmBox = $('#pmBox');
-              $pmList.val('');
-
-              //REMOVING OTHER PM MSGES
-              $pmList.val('');
-
               var userclicked = $(this).text();
-
-              //$pmWrap.css("visibility","visible");
+              $pmWrap.css("visibility","visible");
               $('#otherguy').text(userclicked);
-
+              $pmList.append('<hr>');
+              
               //pm message sent
               $pmForm.submit(function(e){
-                e.preventDefault(); 
+                e.preventDefault();
                 newpm = $pmBox.val().trim();
                 if(newpm != ''){
                   socket.emit('send pm', {msg: newpm, to: userclicked});
-                  $pmWrap.animate({ scrollTop: $(window).height() }, "slow");
+                  pmChatScrollDown();
                   $pmBox.val('');
+                  
                   return false;
                 }
                 $pmBox.val('');
@@ -121,54 +126,47 @@ $(document).ready(function() {
 
             });
 
-            $(document).on("submit", "#sendPM", function(){
+            $("#sendPM").on("submit", function(e){
+              e.preventDefault();
               var touser = $('#otherguy').text();
               var $pmBox = $('#pmBox');
-              var $pmWrap = $('#pmWrap');
+
               if(touser != '') {
+                /*$pmForm.on("submit", function(e){
+                  e.preventDefault(); */
                   newpm = $pmBox.val().trim();
                   if(newpm != ''){
                     socket.emit('send pm', {msg: newpm, to: touser});
-                    $pmWrap.animate({ scrollTop: $(window).height() }, "slow");
+                    pmChatScrollDown();
                     $pmBox.val('');
                     return false;
                   }
+              //});
               }
             });
 
             socket.on('pmmyself', function(data){
+              $pmList.append('<li id="privateMsg"><strong>me' + '</strong>: ' + data.message + '</li>');
               $pmBox.val('');
-              $pmList.append('<li id="privateMsg"><strong>'+ data.nick + '</strong>: ' + data.message + '</li>');
-            });
-
-            socket.on('new pm', function(data) {
-              $pmWrap.css("visibility","visible");
-              $('#otherguy').text(data.nick);
-              //var nicklink = '<button id="clickUser"><strong>'+data.nick+'</strong></button>';
-              $pmList.append('<li id="privateMsg"><strong>'+ data.nick + '</strong>: ' + data.message + '</li>');
-              $pmWrap.animate({ scrollTop: $(window).height() }, "fast");
-              /*
-              $pmForm.submit(function(e){
-                e.preventDefault(); 
-                newpm = $pmBox.val().trim();
-                if(newpm != ''){
-                  socket.emit('send pm', {msg: newpm, to: userclicked});
-                  $pmWrap.animate({ scrollTop: $(window).height() }, "slow");
-                  $pmBox.val('');
-                  return false;
-                }
-                $pmBox.val('');
-              });
-              */
             });
             
+            socket.on('new pm', function(data) {
 
+              $pmWrap.css("visibility","visible");
+              $('#otherguy').text(data.nick);
+              
+              //var nicklink = '<button id="clickUser"><strong>'+data.nick+'</strong></button>';
+              $pmList.append('<li id="privateMsg"><strong>'+ data.nick + '</strong>: ' + data.message + '</li>');
+              pmChatScrollDown();
+
+            });
+            
 
            /************/
             
              //on user disconnect
              socket.on('user left', function(data) {
                $chatList.append('<li id="joinleftMsg"><strong>'+ data.nick + '</strong>' + ' left<li>');
-               $chatWrap.animate({ scrollTop: $(window).height() }, "slow");
+               mainChatScrollDown();
             });
     });

@@ -64,7 +64,7 @@
 /*TODO*/
 #pmWrap {
 	/*visibility: hidden;*/
-	visibility: visible;
+	visibility: hidden;
 	position: relative;
 	float: left;
 	left: 5%;
@@ -92,10 +92,11 @@
 	margin: 3px;
 }
 #otherguy {
+	position: relative;
 	text-align: center;
 	color: #aaa;
 	font-weight: bold;
-	height:auto;
+	/*height:;*/
 }
 
 /*DONE*/
